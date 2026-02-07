@@ -1,11 +1,5 @@
-from flask import Flask, request
-
 import requests
 
-
-app = Flask("Emotion Detector")
-
-@app.route('/emotionDetector')
 def emotion_detector(text_to_analyse):
     response = requests.post(
         url='https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict',
@@ -19,10 +13,11 @@ def emotion_detector(text_to_analyse):
         }
         
     )
-    return response.text
+    emotions=response.json()["emotionPredictions"][0]["emotion"]
+    emotions["dominant_emotion"] = max(emotions, key=emotions.get)
+        
+    return emotions
 
-emotion_detector("I am very happy!")
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
