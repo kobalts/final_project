@@ -11,23 +11,24 @@ def index():
 
 @app.route("/emotionDetector",  methods=["GET"])
 def check_emotions():
+    result=""
     text=request.args.get("textToAnalyze", "", type=str)
-        
-    if text is None:
-        result="no text provided to analyze"
-        return result
-    else:
-        full_response=ed(text)
-        result = ", ".join(
-            f"{key}: {val}"
-            for key, val in full_response.items()
-            if key != "dominant_emotion"
-        )
+    full_response=ed(text)
 
-        return (
-            f"For the given statement, the system response is {result}. "
-            f"The dominant emotion is {full_response['dominant_emotion']}."
-        )
+    if full_response['dominant_emotion']==None:
+        return "Invalid text! Please try again!"
+
+    result = ", ".join(
+        f"{key}: {val}"
+        for key, val in full_response.items()
+        if key != "dominant_emotion"
+    )
+   
+
+    return (
+        f"For the given statement, the system response is {result}. "
+        f"The dominant emotion is {full_response['dominant_emotion']}."
+    )
 
 
 if __name__=="__main__":
